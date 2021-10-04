@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet
+spec:
+  selector:
+    matchLabels:
+      app: dotnet
+  template:
+   metadata:
+    labels:
+     app: dotnet
+   spec:
+    containers:
+     - name: dotnet
+       image: mcr.microsoft.com/dotnet/sdk:5.0 AS build
+       #       ports:
+       #- containerPort: 8080
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnet
+spec:
+  selector:
+    matchLabels:
+      app: aspnet
+  template:
+   metadata:
+    labels:
+     app: aspnet
+   spec:
+    containers:
+     - name: aspnet
+       image: mcr.microsoft.com/dotnet/aspnet:5.0
+---
+#Deploy aplicacao web
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: web
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: web
+ template:
+   metadata:
+    labels:
+     app: web
+   spec:
+     containers:
+       - name: web
+         image: guilhermehsti/conversao-peso:v1
+         ports:
+           - containerPort: 80
+---
+#Serviço para expor a aplicacao
+apiVersion: v1
+kind: Service
+metadata:
+ name: web
+spec:
+ selector:
+  app: web
+ ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30000
+ type: NodePort

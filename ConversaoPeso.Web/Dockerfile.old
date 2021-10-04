@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+WORKDIR /source
+WORKDIR /source/ConversaoPeso.Web
+COPY . .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "aspnetapp.dll"]
